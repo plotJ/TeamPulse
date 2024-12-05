@@ -1,16 +1,14 @@
+"use client"
+
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-} from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import Link from 'next/link';
 import Image from 'next/image';
 
 interface TeamSidebarProps {
   onTeamMemberSelect: (teamMemberId: string) => void;
+  selectedTeamMember?: string;
 }
 
 // This would typically come from your backend
@@ -38,7 +36,7 @@ const teamMembers = [
   }
 ]
 
-export function TeamSidebar({ onTeamMemberSelect }: TeamSidebarProps) {
+export function TeamSidebar({ onTeamMemberSelect, selectedTeamMember }: TeamSidebarProps) {
   const [activeUser, setActiveUser] = useState<string | null>(null)
 
   const handleUserClick = (userId: string) => {
