@@ -49,12 +49,11 @@ export function MainNav({
 
   const getFocusUpdateCount = (focusId: string) => {
     if (focusId === "all") {
+      // When "all" focus is selected, show updates for the current project
       return updates.filter(update => update.project === activeProject).length;
     }
-    return updates.filter(update => 
-      update.project === activeProject && 
-      update.focus === focusId
-    ).length;
+    // For specific focus, show updates that match both project and focus
+    return updates.filter(update => update.focus === focusId).length;
   };
 
   const projectFocuses = activeProject === "all" 
