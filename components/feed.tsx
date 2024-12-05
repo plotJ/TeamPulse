@@ -4,35 +4,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { ThumbsUp } from 'lucide-react'
+import { ThumbsUp } from "lucide-react"
+import { Update } from "@/types"
 import { Comments } from "@/components/comments"
-
-interface Comment {
-  id: number;
-  author: {
-    name: string;
-    avatar: string;
-  };
-  content: string;
-  timestamp: string;
-}
-
-interface Update {
-  id: number;
-  author: {
-    name: string;
-    avatar: string;
-    role: string;
-  };
-  hoursWorked: string;
-  accomplishments: string;
-  problems: string;
-  questions: string;
-  timestamp: string;
-  focus: string;
-  project: string;
-  comments: Comment[];
-}
 
 interface FeedProps {
   updates: Update[];
@@ -57,9 +31,9 @@ export function Feed({ updates, activeFocus, activeProject, activeTeamMember, on
   }
 
   const filteredUpdates = updates.filter(update => {
-    if (activeFocus && activeFocus !== "All" && update.focus !== activeFocus) return false;
-    if (activeProject && activeProject !== "All" && update.project !== activeProject) return false;
-    if (activeTeamMember && update.author.name !== activeTeamMember) return false;
+    if (activeFocus && activeFocus.toLowerCase() !== "all" && update.focus.toLowerCase() !== activeFocus.toLowerCase()) return false;
+    if (activeProject && activeProject.toLowerCase() !== "all" && update.project.toLowerCase() !== activeProject.toLowerCase()) return false;
+    if (activeTeamMember && update.author.name.toLowerCase() !== activeTeamMember.toLowerCase()) return false;
     return true;
   });
 

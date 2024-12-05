@@ -6,18 +6,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import { UpdateData } from "@/types"
 
 interface UpdateCreatorProps {
   activeFocus: string;
   activeProject: string;
   onSubmit: (update: UpdateData) => void;
-}
-
-interface UpdateData {
-  hoursWorked: string;
-  accomplishments: string;
-  problems: string;
-  questions: string;
 }
 
 export function UpdateCreator({ activeFocus, activeProject, onSubmit }: UpdateCreatorProps) {

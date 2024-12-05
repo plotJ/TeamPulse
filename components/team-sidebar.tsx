@@ -7,6 +7,10 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 
+interface TeamSidebarProps {
+  onTeamMemberSelect: (teamMemberId: string) => void;
+}
+
 // This would typically come from your backend
 const teamMembers = [
   {
@@ -29,8 +33,13 @@ const teamMembers = [
   }
 ]
 
-export function TeamSidebar() {
+export function TeamSidebar({ onTeamMemberSelect }: TeamSidebarProps) {
   const [activeUser, setActiveUser] = useState(teamMembers[0].id)
+
+  const handleUserClick = (userId: number) => {
+    setActiveUser(userId);
+    onTeamMemberSelect(userId.toString());
+  }
 
   return (
     <Sidebar className="border-r">
@@ -55,7 +64,7 @@ export function TeamSidebar() {
             {teamMembers.map((member) => (
               <button
                 key={member.id}
-                onClick={() => setActiveUser(member.id)}
+                onClick={() => handleUserClick(member.id)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors",
                   activeUser === member.id
@@ -79,4 +88,3 @@ export function TeamSidebar() {
     </Sidebar>
   )
 }
-

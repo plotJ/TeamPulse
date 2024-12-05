@@ -4,11 +4,12 @@ import { useState } from "react"
 import { TeamSidebar } from "@/components/team-sidebar"
 import { UpdateCreator } from "@/components/update-creator"
 import { Feed } from "@/components/feed"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { MainNav } from "@/components/main-nav"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Update, UpdateData } from "@/types"
 
 interface Project {
   title: string;
@@ -21,39 +22,13 @@ interface Focus {
   projectId: string;
 }
 
-interface Update {
-  id: number;
-  author: {
-    name: string;
-    avatar: string;
-    role: string;
-  };
-  hoursWorked: string;
-  accomplishments: string;
-  problems: string;
-  questions: string;
-  timestamp: string;
-  focus: string;
-  project: string;
-  comments?: {
-    id: number;
-    author: {
-      name: string;
-      avatar: string;
-    };
-    content: string;
-    timestamp: string;
-  }[];
-  teamMemberId?: string;
-}
-
 interface FilterState {
   teamMemberId?: string;
   project?: string;
   focus?: string;
 }
 
-const initialUpdates = [
+const initialUpdates: Update[] = [
   {
     id: 1,
     author: {
@@ -61,13 +36,14 @@ const initialUpdates = [
       avatar: "/avatars/01.png",
       role: "Product Designer"
     },
-    hoursWorked: "6",
-    accomplishments: "Completed user authentication flow designs",
-    problems: "",
-    questions: "Should we add social login options?",
-    timestamp: "4 hours ago",
-    focus: "Authentication",
-    project: "User Management",
+    hoursWorked: "4",
+    accomplishments: "Completed user research for new feature",
+    problems: "None to report",
+    questions: "When can we schedule the design review?",
+    timestamp: "2024-01-10 09:00",
+    focus: "authentication",
+    project: "user-management",
+    comments: [],
     teamMemberId: "jamie"
   },
   {
@@ -77,13 +53,14 @@ const initialUpdates = [
       avatar: "/avatars/02.png",
       role: "Developer"
     },
-    hoursWorked: "8",
-    accomplishments: "Implemented user authentication backend",
-    problems: "Encountered issues with password hashing",
-    questions: "What's our policy on password complexity?",
-    timestamp: "5 hours ago",
-    focus: "Authentication",
-    project: "User Management",
+    hoursWorked: "6",
+    accomplishments: "Fixed critical bug in production",
+    problems: "Database performance issues",
+    questions: "Should we consider caching?",
+    timestamp: "2024-01-10 10:30",
+    focus: "development",
+    project: "backend-api",
+    comments: [],
     teamMemberId: "clara"
   },
   {
@@ -93,20 +70,34 @@ const initialUpdates = [
       avatar: "/avatars/03.png",
       role: "Marketing"
     },
-    hoursWorked: "4",
-    accomplishments: "Drafted email campaign for new feature launch",
-    problems: "Need more details on feature benefits",
-    questions: "",
-    timestamp: "2 hours ago",
-    focus: "Marketing",
-    project: "Feature Launch",
+    hoursWorked: "3",
+    accomplishments: "Created social media campaign",
+    problems: "Need more visual assets",
+    questions: "When is the launch date?",
+    timestamp: "2024-01-10 11:00",
+    focus: "marketing",
+    project: "feature-launch",
+    comments: [],
     teamMemberId: "tom"
   }
 ]
 
+const initialProjects: Project[] = [
+  { title: "User Management", id: "user-management" },
+  { title: "Feature Launch", id: "feature-launch" },
+  { title: "Backend API", id: "backend-api" }
+]
+
+const initialFocuses: Focus[] = [
+  { title: "Authentication", id: "authentication", projectId: "user-management" },
+  { title: "Marketing", id: "marketing", projectId: "feature-launch" },
+  { title: "Development", id: "development", projectId: "backend-api" },
+  { title: "Research", id: "research", projectId: "feature-launch" }
+]
+
 export default function DashboardPage() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [focuses, setFocuses] = useState<Focus[]>([])
+  const [projects, setProjects] = useState<Project[]>(initialProjects)
+  const [focuses, setFocuses] = useState<Focus[]>(initialFocuses)
   const [activeProject, setActiveProject] = useState<string>("all")
   const [activeFocus, setActiveFocus] = useState<string>("all")
   const [updates, setUpdates] = useState<Update[]>(initialUpdates)
@@ -147,7 +138,7 @@ export default function DashboardPage() {
     }
   }
 
-  const handleUpdateSubmit = (newUpdate: Omit<Update, 'id' | 'author'>) => {
+  const handleUpdateSubmit = (newUpdate: UpdateData) => {
     const update: Update = {
       id: Date.now(),
       author: {
@@ -155,10 +146,7 @@ export default function DashboardPage() {
         avatar: "/placeholder-avatar.jpg",
         role: "Software Engineer"
       },
-      hoursWorked: newUpdate.hoursWorked,
-      accomplishments: newUpdate.accomplishments,
-      problems: newUpdate.problems,
-      questions: newUpdate.questions,
+      ...newUpdate,
       timestamp: new Date().toLocaleString(),
       focus: activeFocus,
       project: activeProject,

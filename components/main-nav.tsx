@@ -38,7 +38,9 @@ export function MainNav({
   onAddFocus 
 }: MainNavProps) {
   // Get focuses for the active project
-  const projectFocuses = focuses.filter(focus => focus.projectId === activeProject)
+  const projectFocuses = activeProject.toLowerCase() === "all" 
+    ? focuses 
+    : focuses.filter(focus => focus.projectId === activeProject)
 
   return (
     <div className="border-b">
@@ -50,14 +52,15 @@ export function MainNav({
             onClick={(e) => {
               e.preventDefault();
               onProjectChange("all");
+              onFocusChange("all");  
             }}
             className={cn(
               "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors",
               "h-8 px-4 border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-              activeProject === "all" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+              activeProject.toLowerCase() === "all" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
             )}
           >
-            Projects
+            All Projects
           </Link>
           {projects.filter(project => project.title !== "All").map((project) => (
             <Link
