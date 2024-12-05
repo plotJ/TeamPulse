@@ -111,7 +111,7 @@ export default function DashboardPage() {
   const [activeFocus, setActiveFocus] = useState<string>("all")
   const [updates, setUpdates] = useState<Update[]>(initialUpdates)
   const [filters, setFilters] = useState<FilterState>({})
-  
+
   // Dialog states
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false)
   const [isAddFocusOpen, setIsAddFocusOpen] = useState(false)
@@ -147,7 +147,7 @@ export default function DashboardPage() {
     }
   }
 
-  const handleUpdateSubmit = (newUpdate: any) => {
+  const handleUpdateSubmit = (newUpdate: Omit<Update, 'id' | 'author'>) => {
     const update: Update = {
       id: Date.now(),
       author: {
