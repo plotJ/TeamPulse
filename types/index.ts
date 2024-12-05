@@ -1,20 +1,20 @@
+export interface Author {
+  name: string;
+  avatar: string;
+  role: string;
+  color: string;
+}
+
 export interface Comment {
   id: number;
-  author: {
-    name: string;
-    avatar: string;
-  };
+  author: Author;
   content: string;
   timestamp: string;
 }
 
 export interface Update {
   id: number;
-  author: {
-    name: string;
-    avatar: string;
-    role: string;
-  };
+  author: Author;
   hoursWorked: string;
   accomplishments: string;
   problems: string;
@@ -31,4 +31,7 @@ export interface UpdateData {
   accomplishments: string;
   problems: string;
   questions: string;
+  project: string;
+  focus: string;
+  teamMemberId?: string;
 }

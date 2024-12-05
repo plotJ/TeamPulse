@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { TeamSidebar } from "@/components/team-sidebar"
 import { UpdateCreator } from "@/components/update-creator"
 import { Feed } from "@/components/feed"
@@ -33,8 +33,9 @@ const initialUpdates: Update[] = [
     id: 1,
     author: {
       name: "Jamie L.",
-      avatar: "/avatars/01.png",
-      role: "Product Designer"
+      avatar: "/avatars/placeholder.svg",
+      role: "Product Designer",
+      color: "#E6F3FF"
     },
     hoursWorked: "4",
     accomplishments: "Completed user research for new feature",
@@ -49,26 +50,28 @@ const initialUpdates: Update[] = [
   {
     id: 2,
     author: {
-      name: "Clara S.",
-      avatar: "/avatars/02.png",
-      role: "Developer"
+      name: "Sarah M.",
+      avatar: "/avatars/placeholder.svg",
+      role: "Frontend Developer",
+      color: "#E6FFE6"
     },
     hoursWorked: "6",
-    accomplishments: "Fixed critical bug in production",
-    problems: "Database performance issues",
-    questions: "Should we consider caching?",
+    accomplishments: "Implemented responsive design for dashboard",
+    problems: "Need to optimize performance",
+    questions: "Should we use server-side rendering?",
     timestamp: "2024-01-10 10:30",
-    focus: "development",
-    project: "backend-api",
+    focus: "marketing",
+    project: "feature-launch",
     comments: [],
-    teamMemberId: "clara"
+    teamMemberId: "sarah"
   },
   {
     id: 3,
     author: {
       name: "Tom Wilson",
-      avatar: "/avatars/03.png",
-      role: "Marketing"
+      avatar: "/avatars/placeholder.svg",
+      role: "Marketing",
+      color: "#FFF3E6" // Light orange
     },
     hoursWorked: "3",
     accomplishments: "Created social media campaign",
@@ -83,6 +86,7 @@ const initialUpdates: Update[] = [
 ]
 
 const initialProjects: Project[] = [
+  { title: "All Projects", id: "all" },
   { title: "User Management", id: "user-management" },
   { title: "Feature Launch", id: "feature-launch" },
   { title: "Backend API", id: "backend-api" }
@@ -143,45 +147,82 @@ export default function DashboardPage() {
       id: Date.now(),
       author: {
         name: "Current User",
-        avatar: "/placeholder-avatar.jpg",
-        role: "Software Engineer"
+        avatar: "/avatars/placeholder.svg",
+        role: "Software Engineer",
+        color: "#F3E6FF"
       },
-      ...newUpdate,
+      hoursWorked: newUpdate.hoursWorked,
+      accomplishments: newUpdate.accomplishments,
+      problems: newUpdate.problems,
+      questions: newUpdate.questions,
       timestamp: new Date().toLocaleString(),
       focus: activeFocus,
       project: activeProject,
-      comments: []
+      comments: [],
+      teamMemberId: filters.teamMemberId
     }
     setUpdates([update, ...updates])
   }
 
   const handleAddComment = (updateId: number, content: string) => {
-    setUpdates(prevUpdates => prevUpdates.map(update => {
-      if (update.id === updateId) {
-        return {
-          ...update,
-          comments: [
-            ...(update.comments || []),
-            {
-              id: Date.now(),
-              author: {
-                name: "Current User",
-                avatar: "/placeholder-avatar.jpg"
+    setUpdates(prevUpdates => 
+      prevUpdates.map(update => {
+        if (update.id === updateId) {
+          return {
+            ...update,
+            comments: [
+              ...update.comments,
+              {
+                id: Date.now(),
+                author: {
+                  name: "Current User",
+                  avatar: "/avatars/placeholder.svg",
+                  role: "Software Engineer",
+                  color: "#F3E6FF"
+                },
+                content,
+                timestamp: new Date().toLocaleString(),
               },
-              content,
-              timestamp: new Date().toLocaleString()
-            }
-          ]
+            ],
+          };
         }
-      }
-      return update
-    }))
+        return update;
+      })
+    );
   }
 
   const handleTeamMemberChange = (teamMemberId: string) => {
-    // Team member selection overrides project and focus filters
-    setFilters({ teamMemberId })
+    // Update filters while preserving project and focus selections
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      teamMemberId: teamMemberId === "" ? undefined : teamMemberId
+    }));
   }
+
+  // Get selected values from filters
+  const selectedTeamMember = filters.teamMemberId;
+
+  // Filter updates based on selected team member, project, and focus
+  const filteredUpdates = useMemo(() => {
+    return updates.filter(update => {
+      // Team member filter
+      if (selectedTeamMember && update.teamMemberId !== selectedTeamMember) {
+        return false;
+      }
+      
+      // Project filter
+      if (activeProject !== "all" && update.project !== activeProject) {
+        return false;
+      }
+
+      // Focus filter
+      if (activeFocus !== "all" && update.focus !== activeFocus) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [updates, selectedTeamMember, activeProject, activeFocus]);
 
   return (
     <SidebarProvider>
@@ -192,6 +233,7 @@ export default function DashboardPage() {
             <MainNav 
               projects={projects}
               focuses={focuses}
+              updates={filteredUpdates}
               activeProject={activeProject}
               activeFocus={activeFocus}
               onProjectChange={setActiveProject}
@@ -207,10 +249,10 @@ export default function DashboardPage() {
                   onSubmit={handleUpdateSubmit} 
                 />
                 <Feed 
-                  updates={updates}
+                  updates={filteredUpdates}
                   activeFocus={activeFocus} 
                   activeProject={activeProject}
-                  activeTeamMember={filters.teamMemberId ? updates.find(u => u.teamMemberId === filters.teamMemberId)?.author.name : undefined}
+                  activeTeamMember={selectedTeamMember}
                   onAddComment={handleAddComment}
                 />
               </div>
@@ -223,9 +265,9 @@ export default function DashboardPage() {
       <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Project</DialogTitle>
+            <DialogTitle>Add Project</DialogTitle>
           </DialogHeader>
-          <div className="py-4">
+          <div className="space-y-4 py-4">
             <Input
               placeholder="Project name"
               value={newProjectTitle}
@@ -233,7 +275,6 @@ export default function DashboardPage() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddProjectOpen(false)}>Cancel</Button>
             <Button onClick={handleAddProject}>Add Project</Button>
           </DialogFooter>
         </DialogContent>
@@ -243,9 +284,9 @@ export default function DashboardPage() {
       <Dialog open={isAddFocusOpen} onOpenChange={setIsAddFocusOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Focus Area</DialogTitle>
+            <DialogTitle>Add Focus Area</DialogTitle>
           </DialogHeader>
-          <div className="py-4">
+          <div className="space-y-4 py-4">
             <Input
               placeholder="Focus area name"
               value={newFocusTitle}
@@ -253,8 +294,7 @@ export default function DashboardPage() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddFocusOpen(false)}>Cancel</Button>
-            <Button onClick={handleAddFocus}>Add Focus</Button>
+            <Button onClick={handleAddFocus}>Add Focus Area</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

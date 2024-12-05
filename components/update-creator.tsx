@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -20,13 +20,23 @@ export function UpdateCreator({ activeFocus, activeProject, onSubmit }: UpdateCr
     accomplishments: "",
     problems: "",
     questions: "",
+    project: activeProject || "",
+    focus: activeFocus || ""
   })
   const [isExpanded, setIsExpanded] = useState(true)
+
+  useEffect(() => {
+    setUpdateData(prev => ({
+      ...prev,
+      project: activeProject || "",
+      focus: activeFocus || ""
+    }));
+  }, [activeProject, activeFocus]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSubmit(updateData)
-    setUpdateData({ hoursWorked: "", accomplishments: "", problems: "", questions: "" })
+    setUpdateData({ hoursWorked: "", accomplishments: "", problems: "", questions: "", project: activeProject || "", focus: activeFocus || "" })
   }
 
   return (

@@ -5,31 +5,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MessageCircle } from "lucide-react"
-
-interface Comment {
-  id: number
-  author: {
-    name: string
-    avatar: string
-  }
-  content: string
-  timestamp: string
-}
+import { Comment } from "@/types"
 
 interface CommentsProps {
-  updateId: number
-  comments?: Comment[]
-  onAddComment: (updateId: number, content: string) => void
+  comments?: Comment[];
+  onAddComment: (content: string) => void;
 }
 
-export function Comments({ updateId, comments = [], onAddComment }: CommentsProps) {
+export function Comments({ comments = [], onAddComment }: CommentsProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [newComment, setNewComment] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (newComment.trim()) {
-      onAddComment(updateId, newComment)
+      onAddComment(newComment)
       setNewComment("")
     }
   }

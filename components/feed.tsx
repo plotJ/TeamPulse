@@ -1,10 +1,11 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { ThumbsUp } from "lucide-react"
+import { ThumbsUp, ChevronUp, ChevronDown } from "lucide-react"
 import { Update } from "@/types"
 import { Comments } from "@/components/comments"
 
@@ -17,6 +18,25 @@ interface FeedProps {
 }
 
 export function Feed({ updates, activeFocus, activeProject, activeTeamMember, onAddComment }: FeedProps) {
+  const [expandedUpdates, setExpandedUpdates] = useState<Set<number>>(new Set());
+
+  // Initialize expanded state when updates change
+  useEffect(() => {
+    setExpandedUpdates(new Set(updates.map(u => u.id)));
+  }, [updates]);
+
+  const toggleUpdate = (updateId: number) => {
+    setExpandedUpdates(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(updateId)) {
+        newSet.delete(updateId);
+      } else {
+        newSet.add(updateId);
+      }
+      return newSet;
+    });
+  };
+
   const getFeedTitle = () => {
     if (activeTeamMember) {
       return `Updates from ${activeTeamMember}`
@@ -33,7 +53,7 @@ export function Feed({ updates, activeFocus, activeProject, activeTeamMember, on
   const filteredUpdates = updates.filter(update => {
     if (activeFocus && activeFocus.toLowerCase() !== "all" && update.focus.toLowerCase() !== activeFocus.toLowerCase()) return false;
     if (activeProject && activeProject.toLowerCase() !== "all" && update.project.toLowerCase() !== activeProject.toLowerCase()) return false;
-    if (activeTeamMember && update.author.name.toLowerCase() !== activeTeamMember.toLowerCase()) return false;
+    if (activeTeamMember && update.teamMemberId !== activeTeamMember) return false;
     return true;
   });
 
@@ -48,7 +68,11 @@ export function Feed({ updates, activeFocus, activeProject, activeTeamMember, on
         </Card>
       ) : (
         filteredUpdates.map((update) => (
-          <Card key={update.id} className="hover:shadow-md transition-shadow">
+          <Card 
+            key={update.id} 
+            className="relative overflow-hidden hover:shadow-md transition-shadow"
+            style={{ backgroundColor: update.author.color }}
+          >
             <CardHeader className="flex flex-row items-center space-x-4 space-y-0 pb-2">
               <Avatar className="h-10 w-10">
                 <AvatarImage src={update.author.avatar} alt={update.author.name} />
@@ -58,62 +82,67 @@ export function Feed({ updates, activeFocus, activeProject, activeTeamMember, on
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">{update.author.name}</h3>
-                    <p className="text-sm text-muted-foreground">{update.author.role}</p>
+                    <p className="text-sm text-muted-foreground">{update.author.role} • {update.timestamp}</p>
                   </div>
-                  <div className="text-right">
-                    <span className="text-sm text-muted-foreground">{update.timestamp}</span>
-                    {(!activeProject || activeProject === "All") && (
-                      <p className="text-sm font-medium">{update.project}</p>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => toggleUpdate(update.id)}
+                    className="ml-2"
+                  >
+                    {expandedUpdates.has(update.id) ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
                     )}
-                  </div>
+                  </Button>
+                </div>
+                <div className="flex gap-2 mt-1">
+                  <span className="text-sm text-muted-foreground">Hours: {update.hoursWorked}</span>
+                  <span className="text-sm text-muted-foreground">•</span>
+                  <span className="text-sm text-muted-foreground">{update.project}</span>
+                  <span className="text-sm text-muted-foreground">•</span>
+                  <span className="text-sm text-muted-foreground">{update.focus}</span>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Hours Worked */}
-              <div>
-                <div className="text-sm font-medium text-muted-foreground mb-1">Hours worked</div>
-                <div className="text-lg font-semibold">{update.hoursWorked}h</div>
-              </div>
-
-              {/* Accomplishments */}
-              <div>
-                <div className="text-sm font-medium text-muted-foreground mb-1">Accomplishments</div>
-                <p className="text-sm">{update.accomplishments}</p>
-              </div>
-
-              {/* Problems (if any) */}
-              {update.problems && (
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground mb-1">Problems encountered</div>
-                  <p className="text-sm">{update.problems}</p>
-                </div>
-              )}
-
-              {/* Questions (if any) */}
-              {update.questions && (
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground mb-1">Questions</div>
-                  <p className="text-sm">{update.questions}</p>
-                </div>
-              )}
-            </CardContent>
-            <Separator />
-            <CardFooter className="py-4">
-              <div className="flex space-x-4 w-full">
-                <Button variant="ghost" size="sm" className="h-8 px-2">
-                  <ThumbsUp className="h-4 w-4 mr-2" />
-                  Like
-                </Button>
-                <div className="flex-1">
-                  <Comments
-                    updateId={update.id}
-                    comments={update.comments}
-                    onAddComment={onAddComment}
-                  />
-                </div>
-              </div>
-            </CardFooter>
+            {expandedUpdates.has(update.id) && (
+              <>
+                <CardContent className="pb-3">
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-semibold">Accomplishments</h4>
+                      <p className="mt-1">{update.accomplishments}</p>
+                    </div>
+                    {update.problems && (
+                      <div>
+                        <h4 className="text-sm font-semibold">Problems</h4>
+                        <p className="mt-1">{update.problems}</p>
+                      </div>
+                    )}
+                    {update.questions && (
+                      <div>
+                        <h4 className="text-sm font-semibold">Questions</h4>
+                        <p className="mt-1">{update.questions}</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+                <CardFooter className="flex items-center justify-between pt-0">
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <ThumbsUp className="h-4 w-4" />
+                      <span>Like</span>
+                    </Button>
+                  </div>
+                </CardFooter>
+                <Separator />
+                <Comments 
+                  comments={update.comments} 
+                  onAddComment={(content) => onAddComment(update.id, content)}
+                />
+              </>
+            )}
           </Card>
         ))
       )}
