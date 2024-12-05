@@ -195,17 +195,6 @@ export default function DashboardPage() {
     setFilters({ teamMemberId })
   }
 
-  const filteredUpdates = updates.filter(update => {
-    if (filters.teamMemberId) {
-      return update.teamMemberId === filters.teamMemberId
-    }
-    
-    const matchesProject = !filters.project || update.project === filters.project
-    const matchesFocus = !filters.focus || update.focus === filters.focus
-    
-    return matchesProject && matchesFocus
-  })
-
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-gray-100">
