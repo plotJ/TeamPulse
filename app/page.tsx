@@ -338,16 +338,16 @@ export default function DashboardPage() {
   }, [updates, filters.teamMemberId, activeProject, activeFocus]);
 
   return (
-    <SidebarProvider>
-      <div className="flex flex-col min-h-screen">
-        <SiteHeader />
+    <div className="flex flex-col min-h-screen">
+      <SiteHeader />
+      <SidebarProvider>
         <div className="flex flex-1">
           <SidebarContainer 
             onTeamMemberSelect={handleTeamMemberChange} 
             selectedTeamMember={filters.teamMemberId || ""}
           />
           <SidebarInset className="flex-1">
-            <div className="flex flex-col h-full min-h-screen bg-background">
+            <div className="flex flex-col h-full">
               <MainNav 
                 projects={projects}
                 focuses={focuses}
@@ -416,7 +416,7 @@ export default function DashboardPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </div>
   )
 }

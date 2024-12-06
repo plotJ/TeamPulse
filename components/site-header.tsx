@@ -36,6 +36,12 @@ export function SiteHeader() {
             About
           </Link>
           <Link 
+            href="/blog" 
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          >
+            Blog
+          </Link>
+          <Link 
             href="/pricing" 
             className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
           >
