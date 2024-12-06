@@ -32,8 +32,121 @@ interface FilterState {
 }
 
 const initialUpdates: Update[] = [
+  // Today - January 12
   {
-    id: 1,
+    id: 9,
+    author: {
+      name: "Jamie L.",
+      avatar: "/avatars/placeholder.svg",
+      role: "Product Designer",
+      color: "#E6F3FF"
+    },
+    hoursWorked: "6",
+    accomplishments: "Finalized user flow diagrams for authentication screens. Created high-fidelity mockups for password reset flow.",
+    problems: "Need to align with marketing on brand guidelines for new screens",
+    questions: "Can we schedule a design review with the team tomorrow?",
+    timestamp: "2024-01-12 10:30",
+    focus: "authentication",
+    project: "user-management",
+    comments: [],
+    teamMemberId: "jamie"
+  },
+  {
+    id: 8,
+    author: {
+      name: "Sarah M.",
+      avatar: "/avatars/placeholder.svg",
+      role: "Frontend Developer",
+      color: "#E6FFE6"
+    },
+    hoursWorked: "7",
+    accomplishments: "Implemented new authentication UI components. Added form validation and error handling for login/signup.",
+    problems: "Found edge case with password validation rules",
+    questions: "Should we add password strength indicator?",
+    timestamp: "2024-01-12 11:15",
+    focus: "authentication",
+    project: "user-management",
+    comments: [],
+    teamMemberId: "sarah"
+  },
+  {
+    id: 7,
+    author: {
+      name: "Tom Wilson",
+      avatar: "/avatars/placeholder.svg",
+      role: "Marketing",
+      color: "#FFF3E6"
+    },
+    hoursWorked: "5",
+    accomplishments: "Created content for onboarding emails. Drafted copy for authentication error messages.",
+    problems: "Need to ensure error messages are user-friendly yet secure",
+    questions: "Can we A/B test different welcome email versions?",
+    timestamp: "2024-01-12 14:00",
+    focus: "marketing",
+    project: "feature-launch",
+    comments: [],
+    teamMemberId: "tom"
+  },
+
+  // Yesterday - January 11
+  {
+    id: 6,
+    author: {
+      name: "Jamie L.",
+      avatar: "/avatars/placeholder.svg",
+      role: "Product Designer",
+      color: "#E6F3FF"
+    },
+    hoursWorked: "7",
+    accomplishments: "Created wireframes for 2FA setup process. Conducted user interviews about authentication pain points.",
+    problems: "Users finding current 2FA setup process confusing",
+    questions: "Should we add a skip option for 2FA during initial signup?",
+    timestamp: "2024-01-11 09:45",
+    focus: "authentication",
+    project: "user-management",
+    comments: [],
+    teamMemberId: "jamie"
+  },
+  {
+    id: 5,
+    author: {
+      name: "Sarah M.",
+      avatar: "/avatars/placeholder.svg",
+      role: "Frontend Developer",
+      color: "#E6FFE6"
+    },
+    hoursWorked: "8",
+    accomplishments: "Set up OAuth integration with Google and GitHub. Added loading states and animations to auth forms.",
+    problems: "OAuth redirect flow needs optimization",
+    questions: "Which OAuth providers should we prioritize next?",
+    timestamp: "2024-01-11 16:30",
+    focus: "authentication",
+    project: "user-management",
+    comments: [],
+    teamMemberId: "sarah"
+  },
+  {
+    id: 4,
+    author: {
+      name: "Tom Wilson",
+      avatar: "/avatars/placeholder.svg",
+      role: "Marketing",
+      color: "#FFF3E6"
+    },
+    hoursWorked: "6",
+    accomplishments: "Created landing page copy highlighting new security features. Started social media campaign about improved auth.",
+    problems: "Need more specific metrics about current auth pain points for marketing",
+    questions: "Can we get some user testimonials about the new auth features?",
+    timestamp: "2024-01-11 13:20",
+    focus: "marketing",
+    project: "feature-launch",
+    comments: [],
+    teamMemberId: "tom"
+  },
+
+  // Two days ago - January 10
+  {
+    id: 3,
     author: {
       name: "Jamie L.",
       avatar: "/avatars/placeholder.svg",
@@ -41,9 +154,9 @@ const initialUpdates: Update[] = [
       color: "#E6F3FF"
     },
     hoursWorked: "4",
-    accomplishments: "Completed user research for new feature",
-    problems: "None to report",
-    questions: "When can we schedule the design review?",
+    accomplishments: "Completed user research for new authentication flow. Created initial design system components for auth screens.",
+    problems: "Need to ensure accessibility standards are met",
+    questions: "When can we schedule the first design review?",
     timestamp: "2024-01-10 09:00",
     focus: "authentication",
     project: "user-management",
@@ -59,27 +172,27 @@ const initialUpdates: Update[] = [
       color: "#E6FFE6"
     },
     hoursWorked: "6",
-    accomplishments: "Implemented responsive design for dashboard",
-    problems: "Need to optimize performance",
-    questions: "Should we use server-side rendering?",
+    accomplishments: "Set up new auth component library. Started implementing responsive design for auth forms.",
+    problems: "Need to optimize form submission performance",
+    questions: "Should we implement progressive form validation?",
     timestamp: "2024-01-10 10:30",
-    focus: "marketing",
-    project: "feature-launch",
+    focus: "authentication",
+    project: "user-management",
     comments: [],
     teamMemberId: "sarah"
   },
   {
-    id: 3,
+    id: 1,
     author: {
       name: "Tom Wilson",
       avatar: "/avatars/placeholder.svg",
       role: "Marketing",
-      color: "#FFF3E6" // Light orange
+      color: "#FFF3E6"
     },
-    hoursWorked: "3",
-    accomplishments: "Created social media campaign",
-    problems: "Need more visual assets",
-    questions: "When is the launch date?",
+    hoursWorked: "5",
+    accomplishments: "Drafted marketing strategy for new auth features. Created initial social media campaign outline.",
+    problems: "Need more visual assets for campaign",
+    questions: "What's our target launch date for the new auth system?",
     timestamp: "2024-01-10 11:00",
     focus: "marketing",
     project: "feature-launch",
@@ -238,7 +351,7 @@ export default function DashboardPage() {
               <MainNav 
                 projects={projects}
                 focuses={focuses}
-                updates={filteredUpdates}
+                updates={updates}
                 activeProject={activeProject}
                 activeFocus={activeFocus}
                 onProjectChange={setActiveProject}

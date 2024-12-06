@@ -44,23 +44,24 @@ export function MainNav({
     if (projectId === "all") {
       return updates.length;
     }
+    // Simply count all updates for this project, regardless of any other state
     return updates.filter(update => 
       update.project.toLowerCase() === projectId.toLowerCase()
     ).length;
   };
 
   const getFocusUpdateCount = (focusId: string) => {
-    // If it's "all", return count of all updates for current project
+    // For "all" focuses within a project, show total updates for that project
     if (focusId === "all") {
       return updates.filter(update => 
         update.project.toLowerCase() === activeProject.toLowerCase()
       ).length;
     }
 
-    // For specific focus, count updates that match both project and focus
+    // For specific focus, only count updates that match this focus AND its project
     return updates.filter(update => 
-      update.project.toLowerCase() === activeProject.toLowerCase() &&
-      update.focus.toLowerCase() === focusId.toLowerCase()
+      update.focus.toLowerCase() === focusId.toLowerCase() &&
+      update.project.toLowerCase() === activeProject.toLowerCase()
     ).length;
   };
 
