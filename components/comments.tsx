@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MessageCircle } from "lucide-react"
+import { TimeAgo } from "@/components/time-ago"
 import { Comment } from "@/types"
 
 interface CommentsProps {
@@ -51,7 +52,9 @@ export function Comments({ comments = [], onAddComment }: CommentsProps) {
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">{comment.author.name}</span>
-                    <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                    <div className="text-sm text-muted-foreground">
+                      <TimeAgo date={comment.timestamp} />
+                    </div>
                   </div>
                   <p className="text-sm">{comment.content}</p>
                 </div>

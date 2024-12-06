@@ -44,21 +44,30 @@ export function MainNav({
     if (projectId === "all") {
       return updates.length;
     }
-    return updates.filter(update => update.project === projectId).length;
+    return updates.filter(update => 
+      update.project.toLowerCase() === projectId.toLowerCase()
+    ).length;
   };
 
   const getFocusUpdateCount = (focusId: string) => {
+    // If it's "all", return count of all updates for current project
     if (focusId === "all") {
-      // When "all" focus is selected, show updates for the current project
-      return updates.filter(update => update.project === activeProject).length;
+      return updates.filter(update => 
+        update.project.toLowerCase() === activeProject.toLowerCase()
+      ).length;
     }
-    // For specific focus, show updates that match both project and focus
-    return updates.filter(update => update.focus === focusId).length;
+
+    // For specific focus, count updates that match both project and focus
+    return updates.filter(update => 
+      update.project.toLowerCase() === activeProject.toLowerCase() &&
+      update.focus.toLowerCase() === focusId.toLowerCase()
+    ).length;
   };
 
-  const projectFocuses = activeProject === "all" 
-    ? [] 
-    : focuses.filter((focus) => focus.projectId === activeProject);
+  // Get focuses for the current project
+  const projectFocuses = focuses.filter(focus => 
+    activeProject === "all" ? false : focus.projectId.toLowerCase() === activeProject.toLowerCase()
+  );
 
   return (
     <div className="border-b">

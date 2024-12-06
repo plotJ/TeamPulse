@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { ThumbsUp, ChevronUp, ChevronDown } from "lucide-react"
 import { Update } from "@/types"
 import { Comments } from "@/components/comments"
+import { TimeAgo } from "@/components/time-ago"
 
 interface FeedProps {
   updates: Update[];
@@ -51,9 +52,27 @@ export function Feed({ updates, activeFocus, activeProject, activeTeamMember, on
   }
 
   const filteredUpdates = updates.filter(update => {
-    if (activeFocus && activeFocus.toLowerCase() !== "all" && update.focus.toLowerCase() !== activeFocus.toLowerCase()) return false;
-    if (activeProject && activeProject.toLowerCase() !== "all" && update.project.toLowerCase() !== activeProject.toLowerCase()) return false;
-    if (activeTeamMember && update.teamMemberId !== activeTeamMember) return false;
+    // If a project is selected (not "all"), filter by project
+    if (activeProject && activeProject !== "all") {
+      if (update.project.toLowerCase() !== activeProject.toLowerCase()) {
+        return false;
+      }
+      
+      // If a focus is selected (not "all"), filter by focus within the project
+      if (activeFocus && activeFocus !== "all") {
+        if (update.focus.toLowerCase() !== activeFocus.toLowerCase()) {
+          return false;
+        }
+      }
+    }
+
+    // If team member is selected, filter by team member
+    if (activeTeamMember) {
+      if (update.teamMemberId !== activeTeamMember) {
+        return false;
+      }
+    }
+
     return true;
   });
 
@@ -82,7 +101,9 @@ export function Feed({ updates, activeFocus, activeProject, activeTeamMember, on
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">{update.author.name}</h3>
-                    <p className="text-sm text-muted-foreground">{update.author.role} • {update.timestamp}</p>
+                    <div className="text-sm text-muted-foreground">
+                      <TimeAgo date={update.timestamp} />
+                    </div>
                   </div>
                   <Button 
                     variant="ghost" 

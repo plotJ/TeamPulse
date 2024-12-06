@@ -35,3 +35,14 @@ export interface UpdateData {
   focus: string;
   teamMemberId?: string;
 }
+
+export interface ChatMessage {
+  id: number
+  content: string
+  timestamp: string
+  author: {
+    name: string
+    avatar: string
+    role: string
+  }
+}

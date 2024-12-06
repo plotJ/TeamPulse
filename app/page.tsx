@@ -10,6 +10,9 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Update, UpdateData } from "@/types"
+import { WorkspaceChat } from "@/components/workspace-chat"
+import { SiteHeader } from "@/components/site-header"
+import { SidebarContainer } from "@/components/sidebar-container"
 
 interface Project {
   title: string;
@@ -199,14 +202,11 @@ export default function DashboardPage() {
     }));
   }
 
-  // Get selected values from filters
-  const selectedTeamMember = filters.teamMemberId;
-
   // Filter updates based on selected team member, project, and focus
   const filteredUpdates = useMemo(() => {
     return updates.filter(update => {
       // Team member filter
-      if (selectedTeamMember && update.teamMemberId !== selectedTeamMember) {
+      if (filters.teamMemberId && update.teamMemberId !== filters.teamMemberId) {
         return false;
       }
       
@@ -222,82 +222,88 @@ export default function DashboardPage() {
 
       return true;
     });
-  }, [updates, selectedTeamMember, activeProject, activeFocus]);
+  }, [updates, filters.teamMemberId, activeProject, activeFocus]);
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-gray-100">
-        <TeamSidebar onTeamMemberSelect={handleTeamMemberChange} />
-        <SidebarInset className="flex-1">
-          <div className="flex flex-col h-full min-h-screen bg-background">
-            <MainNav 
-              projects={projects}
-              focuses={focuses}
-              updates={filteredUpdates}
-              activeProject={activeProject}
-              activeFocus={activeFocus}
-              onProjectChange={setActiveProject}
-              onFocusChange={setActiveFocus}
-              onAddProject={() => setIsAddProjectOpen(true)}
-              onAddFocus={() => setIsAddFocusOpen(true)}
-            />
-            <main className="flex-1 p-8 overflow-y-auto">
-              <div className="space-y-8 max-w-[1600px] w-full mx-auto">
-                <UpdateCreator 
-                  activeFocus={activeFocus} 
-                  activeProject={activeProject}
-                  onSubmit={handleUpdateSubmit} 
-                />
-                <Feed 
-                  updates={filteredUpdates}
-                  activeFocus={activeFocus} 
-                  activeProject={activeProject}
-                  activeTeamMember={selectedTeamMember}
-                  onAddComment={handleAddComment}
-                />
-              </div>
-            </main>
-          </div>
-        </SidebarInset>
+      <div className="flex flex-col min-h-screen">
+        <SiteHeader />
+        <div className="flex flex-1">
+          <SidebarContainer 
+            onTeamMemberSelect={handleTeamMemberChange} 
+            selectedTeamMember={filters.teamMemberId || ""}
+          />
+          <SidebarInset className="flex-1">
+            <div className="flex flex-col h-full min-h-screen bg-background">
+              <MainNav 
+                projects={projects}
+                focuses={focuses}
+                updates={filteredUpdates}
+                activeProject={activeProject}
+                activeFocus={activeFocus}
+                onProjectChange={setActiveProject}
+                onFocusChange={setActiveFocus}
+                onAddProject={() => setIsAddProjectOpen(true)}
+                onAddFocus={() => setIsAddFocusOpen(true)}
+              />
+              <main className="flex-1 p-8 overflow-y-auto">
+                <div className="space-y-8 max-w-[1600px] w-full mx-auto">
+                  <UpdateCreator 
+                    activeFocus={activeFocus} 
+                    activeProject={activeProject}
+                    onSubmit={handleUpdateSubmit} 
+                  />
+                  <Feed 
+                    updates={filteredUpdates}
+                    activeFocus={activeFocus} 
+                    activeProject={activeProject}
+                    activeTeamMember={filters.teamMemberId}
+                    onAddComment={handleAddComment}
+                  />
+                </div>
+              </main>
+            </div>
+          </SidebarInset>
+        </div>
+
+        {/* Add Project Dialog */}
+        <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Project</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <Input
+                placeholder="Project name"
+                value={newProjectTitle}
+                onChange={(e) => setNewProjectTitle(e.target.value)}
+              />
+            </div>
+            <DialogFooter>
+              <Button onClick={handleAddProject}>Add Project</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Focus Dialog */}
+        <Dialog open={isAddFocusOpen} onOpenChange={setIsAddFocusOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Focus Area</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <Input
+                placeholder="Focus area name"
+                value={newFocusTitle}
+                onChange={(e) => setNewFocusTitle(e.target.value)}
+              />
+            </div>
+            <DialogFooter>
+              <Button onClick={handleAddFocus}>Add Focus Area</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      {/* Add Project Dialog */}
-      <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Project</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <Input
-              placeholder="Project name"
-              value={newProjectTitle}
-              onChange={(e) => setNewProjectTitle(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button onClick={handleAddProject}>Add Project</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Focus Dialog */}
-      <Dialog open={isAddFocusOpen} onOpenChange={setIsAddFocusOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Focus Area</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <Input
-              placeholder="Focus area name"
-              value={newFocusTitle}
-              onChange={(e) => setNewFocusTitle(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button onClick={handleAddFocus}>Add Focus Area</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </SidebarProvider>
   )
 }

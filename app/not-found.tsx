@@ -1,14 +1,20 @@
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { SiteHeader } from "@/components/site-header"
 
 export default function NotFound() {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
-      <h2 className="text-2xl font-bold">Page Not Found</h2>
-      <p>Could not find requested resource</p>
-      <Button asChild>
-        <Link href="/">Return Home</Link>
-      </Button>
+    <div className="relative flex min-h-screen flex-col">
+      <SiteHeader />
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <h2 className="text-2xl font-bold mb-4">Page Not Found</h2>
+        <p className="text-muted-foreground mb-4">Could not find the requested page</p>
+        <Link 
+          href="/"
+          className="text-primary hover:underline"
+        >
+          Return Home
+        </Link>
+      </div>
     </div>
   )
 }

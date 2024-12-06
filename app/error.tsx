@@ -2,6 +2,7 @@
  
 import { useEffect } from 'react'
 import { Button } from "@/components/ui/button"
+import { SiteHeader } from "@/components/site-header"
  
 export default function Error({
   error,
@@ -16,14 +17,19 @@ export default function Error({
   }, [error])
  
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
-      <h2 className="text-2xl font-bold">Something went wrong!</h2>
-      <Button
-        onClick={reset}
-        variant="outline"
-      >
-        Try again
-      </Button>
+    <div className="relative flex min-h-screen flex-col">
+      <SiteHeader />
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <h2 className="text-2xl font-bold mb-4">Something went wrong!</h2>
+        <p className="text-muted-foreground mb-4">We apologize for the inconvenience</p>
+        <Button
+          onClick={reset}
+          variant="outline"
+          className="min-w-[100px]"
+        >
+          Try again
+        </Button>
+      </div>
     </div>
   )
 }
